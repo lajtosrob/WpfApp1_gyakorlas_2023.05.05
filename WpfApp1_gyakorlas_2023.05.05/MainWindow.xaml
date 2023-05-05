@@ -19,9 +19,13 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <Label Content="Kérem adja meg a kategóriát!"/>
             <TextBox x:Name="txtKategoria" Width="120"
-                     Background="LightGreen" KeyDown="txtKategoria_KeyDown"/>
+                     Background="LightGreen" KeyDown="txtKategoria_KeyDown"
+                     VerticalAlignment="Center"
+                     FontSize="15"/>
             <Button x:Name="btnBetolt"
-                    Content="Betöltés" Click="btnBetolt_Click"/>
+                    Content="Betöltés" Click="btnBetolt_Click"
+                    Height="25"
+                    Margin="10 0 0 0"/>
         </StackPanel>
                      
     </Grid>

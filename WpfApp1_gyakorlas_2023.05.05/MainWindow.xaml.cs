@@ -26,37 +26,35 @@ namespace WpfApp1_gyakorlas_2023._05._05
         public MainWindow()
         {
             InitializeComponent();
+            txtKategoria.Focus();
         }
 
         private void btnBetolt_Click(object sender, RoutedEventArgs e)
         {
-            MySqlConnection SQLKapcsolat = new MySqlConnection("datasource=127.0.0.1;port=3306;database=hardver;username=root;password=;");
-            SQLKapcsolat.Open();
+            MySqlConnection SQLkapcsolat = new MySqlConnection("datasource=127.0.0.1;port=3306;database=hardver;username=root;password=;");
+            SQLkapcsolat.Open();
 
-            string SQLSelect = "SELECT gyártó, COUNT(*) AS darabSzám, " +
-                " MAX(ár) AS maxÁr, AVG(ár) AS Átlag " +
-                " FROM termékek WHERE " +
-                $"kategória = '{txtKategoria.Text}' " +
-                " GROUP BY gyártó;";
+            string SQLselect = "SELECT gyártó, COUNT(*) AS darabSzám, MAX(ár) AS maxÁr, AVG(ár) AS Átlag FROM termékek WHERE " +
+                $" kategória = '{txtKategoria.Text}'" +
+                "GROUP BY gyártó;";
 
-            MySqlCommand SQLParancs = new MySqlCommand(SQLSelect, SQLKapcsolat);
+            MySqlCommand SQLparancs = new MySqlCommand(SQLselect, SQLkapcsolat);
 
-            MySqlDataReader dataReader = SQLParancs.ExecuteReader();
+            MySqlDataReader dataReader = SQLparancs.ExecuteReader();
 
             while (dataReader.Read())
             {
-                Gyarto ujsor = new Gyarto(dataReader.GetString("gyártó"),
+                Gyarto ujsor = new Gyarto(
+                    dataReader.GetString("gyártó"),
                     dataReader.GetInt32("darabSzám"),
                     dataReader.GetInt32("maxÁr"),
                     dataReader.GetDouble("Átlag")
                     );
-
-                gyartok.Add(ujsor);
+                gyartok.Add( ujsor );
             }
             dataReader.Close();
-            SQLKapcsolat.Close();
+            SQLkapcsolat.Close();
             dgRekordok.ItemsSource = gyartok;
-
         }
 
         private void txtKategoria_KeyDown(object sender, KeyEventArgs e)
@@ -81,8 +79,8 @@ namespace WpfApp1_gyakorlas_2023._05._05
                     Gyarto ujsor = new Gyarto(dataReader.GetString("gyártó"),
                         dataReader.GetInt32("darabSzám"),
                         dataReader.GetInt32("maxÁr"),
-                        dataReader.GetDouble("Átlag")
-                        );
+                        Convert.ToInt32(dataReader.GetDouble("Átlag"))
+                        ) ;
 
                     gyartok.Add(ujsor);
                 }
@@ -90,9 +88,6 @@ namespace WpfApp1_gyakorlas_2023._05._05
                 SQLKapcsolat.Close();
                 dgRekordok.ItemsSource = gyartok;
             }
-
-
-
         }
     }
 }
