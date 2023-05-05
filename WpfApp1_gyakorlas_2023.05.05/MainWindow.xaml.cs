@@ -21,7 +21,7 @@ namespace WpfApp1_gyakorlas_2023._05._05
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+
         List<Gyarto> gyartok = new List<Gyarto>();
         public MainWindow()
         {
@@ -30,7 +30,7 @@ namespace WpfApp1_gyakorlas_2023._05._05
 
         private void btnBetolt_Click(object sender, RoutedEventArgs e)
         {
-           MySqlConnection SQLKapcsolat = new MySqlConnection("datasource=127.0.0.1;port=3306;database=hardver;username=root;password=;");
+            MySqlConnection SQLKapcsolat = new MySqlConnection("datasource=127.0.0.1;port=3306;database=hardver;username=root;password=;");
             SQLKapcsolat.Open();
 
             string SQLSelect = "SELECT gyártó, COUNT(*) AS darabSzám, " +
@@ -61,32 +61,38 @@ namespace WpfApp1_gyakorlas_2023._05._05
 
         private void txtKategoria_KeyDown(object sender, KeyEventArgs e)
         {
-            MySqlConnection SQLKapcsolat = new MySqlConnection("datasource=127.0.0.1;port=3306;database=hardver;username=root;password=;");
-            SQLKapcsolat.Open();
-
-            string SQLSelect = "SELECT gyártó, COUNT(*) AS darabSzám, " +
-                " MAX(ár) AS maxÁr, AVG(ár) AS Átlag " +
-                " FROM termékek WHERE " +
-                $"kategória = '{txtKategoria.Text}' " +
-                " GROUP BY gyártó;";
-
-            MySqlCommand SQLParancs = new MySqlCommand(SQLSelect, SQLKapcsolat);
-
-            MySqlDataReader dataReader = SQLParancs.ExecuteReader();
-
-            while (dataReader.Read())
+            if (e.Key == Key.Enter)
             {
-                Gyarto ujsor = new Gyarto(dataReader.GetString("gyártó"),
-                    dataReader.GetInt32("darabSzám"),
-                    dataReader.GetInt32("maxÁr"),
-                    dataReader.GetDouble("Átlag")
-                    );
+                MySqlConnection SQLKapcsolat = new MySqlConnection("datasource=127.0.0.1;port=3306;database=hardver;username=root;password=;");
+                SQLKapcsolat.Open();
 
-                gyartok.Add(ujsor);
+                string SQLSelect = "SELECT gyártó, COUNT(*) AS darabSzám, " +
+                    " MAX(ár) AS maxÁr, AVG(ár) AS Átlag " +
+                    " FROM termékek WHERE " +
+                    $"kategória = '{txtKategoria.Text}' " +
+                    " GROUP BY gyártó;";
+
+                MySqlCommand SQLParancs = new MySqlCommand(SQLSelect, SQLKapcsolat);
+
+                MySqlDataReader dataReader = SQLParancs.ExecuteReader();
+
+                while (dataReader.Read())
+                {
+                    Gyarto ujsor = new Gyarto(dataReader.GetString("gyártó"),
+                        dataReader.GetInt32("darabSzám"),
+                        dataReader.GetInt32("maxÁr"),
+                        dataReader.GetDouble("Átlag")
+                        );
+
+                    gyartok.Add(ujsor);
+                }
+                dataReader.Close();
+                SQLKapcsolat.Close();
+                dgRekordok.ItemsSource = gyartok;
             }
-            dataReader.Close();
-            SQLKapcsolat.Close();
-            dgRekordok.ItemsSource = gyartok;
+
+
+
         }
     }
 }
